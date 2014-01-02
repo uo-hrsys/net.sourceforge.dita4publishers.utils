@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="utility.init" name="d4pUtils">
+
+  <import file="customize.xml"/>
+
+ <target name="utility.init" depends="utility.welcome, utility.starts.html5, utility.bye"/>
+
+ <target name="utility.welcome">
+  <echo>
+    Welcome to the Dita for publishers Utility
+
+    What do you want to do today?
+
+    1. Create a HTML5 customization plugin (xsl, css, javascript customization)
+    0. Cancel
+
+  </echo>
+
+  <input message="Your choice?" addproperty="utility.choice" defaultvalue="0"/>
+
+  <condition property="choice.html5" value="yes">
+   <equals arg1="${utility.choice}" arg2="1" />
+  </condition>
+
+  <condition property="full.customization" value="yes">
+   <equals arg1="${utility.choice}" arg2="1" />
+  </condition>
+
+  </target>
+
+ <target name="utility.starts.html5" if="choice.html5" >
+  <antcall target="customization.init">
+   <param name="full.customization" value="${full.customization}"/>
+  </antcall>
+ </target>
+
+
+ <target name="utility.bye" >
+  <echo>Bye...</echo>
+ </target>
+
+
+</project>

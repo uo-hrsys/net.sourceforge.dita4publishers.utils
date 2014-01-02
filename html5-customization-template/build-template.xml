@@ -1,0 +1,19 @@
+<project name="dita2${customization.transtype}" default="dita2${customization.transtype}" xmlns:dita="http://dita-ot.sourceforge.net">
+
+  <property name="transtype" value="${customization.transtype}"/>
+  <dirname property="dita2${customization.transtype}.dir" file="@[@ant.file.dita2${customization.transtype}@]@"/>
+
+  <target name="dita2${customization.transtype}"
+    xmlns:dita="http://dita-ot.sourceforge.net"
+    dita:extension="depends org.dita.dost.platform.InsertDependsAction">
+
+    <antcall target="dita2html5">
+      <param name="map2html5.style" value="@[@dita2${customization.transtype}.dir@]@/xsl/map2${customization.transtype}.xsl"/>
+      <param name="html5.site.theme" value="${customization.theme}" />
+      <param name="html5.theme.config.dir" value="@[@dita2${customization.transtype}.dir@]@/theme" />
+      <param name="html5.theme.dir" value="@[@dita2${customization.transtype}.dir@]@/themes/${customization.theme}" />
+    </antcall>
+
+  </target>
+
+</project>

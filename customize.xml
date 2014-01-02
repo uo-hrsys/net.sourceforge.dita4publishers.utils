@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="customization.init" name="customization">
+
+ <property name="customization.template.dir" location="html5-customization-template"></property>
+ <property name="dita.plugins.dir" location=".."/>
+ <property name="dita.plugin.html5" location="${dita.plugins.dir}/net.sourceforge.dita4publishers.html5"/>
+ <property name="dita.plugin.html5.theme.default" location="${dita.plugins.dir}/net.sourceforge.dita4publishers.html5/html5-libs/themes/dita-d4p-classic"/>
+
+ <macrodef name="createPluginFile">
+  <attribute name="source" />
+  <attribute name="destination" />
+  <sequential>
+   <antcall target="customization.create.plugin.file">
+     <param name="source" value="@{source}"/>
+     <param name="destination" value="@{destination}"/>
+   </antcall>
+
+  </sequential>
+ </macrodef>
+
+ <target name="customization.create.plugin.file">
+  <dirname property="parent.dir" file="${customization.plugins.path}/${destination}"/>
+  <mkdir dir="${parent.dir}"/>
+
+  <loadfile property="customization.file" srcFile="${customization.template.dir}/${source}"  failonerror="true">
+   <filterchain>
+
+    <expandproperties/>
+
+    <filterreader classname="org.apache.tools.ant.filters.ReplaceTokens">
+     <param type="tokenchar" name="begintoken" value="@"/>
+     <param type="tokenchar" name="endtoken" value="@"/>
+     <param type="token" name="[" value="${"/>
+     <param type="token" name="]" value="}"/>
+    </filterreader>
+
+
+
+   </filterchain>
+  </loadfile>
+
+  <echo file="${customization.plugins.path}/${destination}">${customization.file}</echo>
+  <echo>File ${customization.plugins.path}/${destination} created </echo>
+ </target>
+
+ <target name="customization.request.client.info">
+
+  <input message="Plugin's domain (no space) ?" addproperty="customization.domain" defaultvalue="net.sourceforge.dita4publishers"/>
+  <input message="Plugin's name (no space) ?" addproperty="customization.name" defaultvalue="html5"/>
+  <input message="Plugin's transtype (no space)?" addproperty="customization.transtype" defaultvalue="my-html5"/>
+  <input message="Plugin's theme (no space)?" addproperty="customization.theme" defaultvalue="${customization.name}-${customization.transtype}"/>
+
+  <property name="customization.plugins.name" value="${customization.domain}.${customization.name}.${customization.transtype}"/>
+  <property name="customization.plugins.path" location="${dita.plugins.dir}/${customization.plugins.name}"/>
+
+ </target>
+
+ <target name="customization.init" depends="customization.request.client.info, customization.create.plugin, customization.exit">
+
+ </target>
+
+ <target name="customization.create.plugin">
+
+  <!-- create directory structure -->
+  <mkdir dir="${customization.plugins.path}"/>
+  <mkdir dir="${customization.plugins.path}/strings"/>
+  <mkdir dir="${customization.plugins.path}/xsl"/>
+  <mkdir dir="${customization.plugins.path}/theme/"/>
+  <mkdir dir="${customization.plugins.path}/theme/${customization.theme}"/>
+
+  <copy todir="${customization.plugins.path}/theme/${customization.theme}">
+   <fileset dir="${dita.plugin.html5.theme.default}"/>
+  </copy>
+
+  <replace file="${customization.plugins.path}/theme/${customization.theme}/config.xml" token="dita-d4p-classic" value="${customization.theme}"/>
+
+  <!--symlink link="${customization.plugins.path}/libs" resource="${dita.plugin.html5}/libs" overwrite="yes"/-->
+
+  <createPluginFile source="plugin.xml" destination="plugin.xml"/>
+  <createPluginFile source="build.xml" destination="build.xml"/>
+  <createPluginFile source="parameters.xml" destination="parameters.xml"/>
+  <createPluginFile source="strings/strings.xml" destination="strings/strings.xml"/>
+
+  <createPluginFile source="build-template.xml" destination="build_${customization.transtype}_html5_template.xml"/>
+  <createPluginFile source="xsl/custom_template.xsl" destination="xsl/map2${customization.transtype}_template.xsl"/>
+  <createPluginFile source="xsl/customImpl.xsl" destination="xsl/map2${customization.transtype}Impl.xsl"/>
+  <createPluginFile source="xsl/custom-all-html5-transforms.xsl" destination="xsl/custom-all-html5-transforms.xsl"/>
+
+ </target>
+
+
+ <target name="customization.exit">
+  <echo>
+   Customization plugin created.
+   You might run the following commands:
+
+   # DITA-OT integration
+   ant -f integrator.xml
+
+   # Run a sample
+   ant -Dargs.input=samples/sequence.ditamap -Doutput.dir=out/garage -Dtranstype=${customization.transtype}
+
+  </echo>
+ </target>
+
+</project>

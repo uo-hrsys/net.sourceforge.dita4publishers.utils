@@ -1,0 +1,3 @@
+<project>
+  <import file="build_${customization.transtype}_html5.xml" />
+</project>
