@@ -3,9 +3,9 @@ org.uottawa.html5
 
 This plugin extends the DITA for Publishers HTML5 plugin and generates pages with the University of Ottawa templates.
 
-The plugin will only works on University of Ottawa servers.
+The plugin will only work on University of Ottawa servers.
 
-The code is provided 'as an example' for developers who wants to use the html5 plugin
+The code is provided 'as an example' for developers who want to use the html5 plugin
 of the DITA for Publishers project.
 
 
